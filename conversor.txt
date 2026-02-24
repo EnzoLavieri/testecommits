@@ -1,0 +1,25 @@
+To Do bike:
+Montar o motor no aro
+Arrumar freios 
+
+To Do bateria:
+Célula 48V 13Ah:
+13 células em série (para a tensão de 48V).
+5 células em paralelo (para a capacidade de 13Ah).
+Soldar BMS
+
+Gastos:
+--- bike
+Aro 29 36 furos
+Alinhamento do aro
+Pastilhas
+
+--- bateria
+Fusível
+Caixa de proteção p/ célula
+Fita de níquel p/ soldagem
+Maquina de solda a ponto
+Testador de bateria
+BMS de 35A
+Carregador
+Suportes para montar a bateria de li-ion
