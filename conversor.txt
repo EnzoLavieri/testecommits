@@ -1,25 +1,46 @@
 To Do bike:
-Montar o motor no aro
-Arrumar freios 
+[] Montar o motor no aro
+[] Arrumar freios 
 
 To Do bateria:
-Célula 48V 13Ah:
-13 células em série (para a tensão de 48V).
-5 células em paralelo (para a capacidade de 13Ah).
-Soldar BMS
+[] Célula 48V 13Ah:
+[] 13 células em série (para a tensão de 48V).
+[] 5 células em paralelo (para a capacidade de 13Ah).
+[] Soldar BMS
+[] Montar bateria 
 
 Gastos:
 --- bike
-Aro 29 36 furos
-Alinhamento do aro
-Pastilhas
+[] Aro 29 36 furos
+
+[] Alinhamento do aro
+
+[] Pastilhas
+
+[] Capacete 
+https://www.mercadolivre.com.br/pro-tork-fast-tech-brancocinza-60/p/MLB18721198?product_trigger_id=MLB18721197&picker=true&quantity=1
 
 --- bateria
-Fusível
-Caixa de proteção p/ célula
-Fita de níquel p/ soldagem
-Maquina de solda a ponto
-Testador de bateria
-BMS de 35A
-Carregador
-Suportes para montar a bateria de li-ion
+[] Fusível
+
+[] Caixa de proteção p/ célula
+
+[] Fita de níquel p/ soldagem
+
+[] Maquina de solda a ponto
+
+[] Testador de bateria
+https://shopee.com.br/product/550187598/19696897567?gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkVEdTU3BlMW9zMXB6bGYrZ0J1VEdQc0YwdGFPZ1pkOEFmRmRoMzRHUmszMXhRcy9aSGVZSXRNY2NqOXNmZUVlME9PcFJoNkFxaXFCQlBRZjFhcTNsSzNmbVdrMERjZ21PYmNiUkhkNEtFK2NUaW1VYVZWYXAyOEtrZjIzdFo5NGlRPT0&gad_source=1&gad_campaignid=23316803936&gbraid=0AAAAACoEtRk7T1Gm4I75OGiBwwz7UK__l&gclid=EAIaIQobChMI6pL-4cnykgMVeAEMAh1PvRMPEAQYBCABEgJMFfD_BwE
+
+[] BMS de 35A
+https://produto.mercadolivre.com.br/MLB-4294738675-a-z-placa-de-proteco-13s-35a-48v-bmspcbpcm-_JM?matt_tool=18956390&utm_source=google_shopping&utm_medium=organic
+
+[] Carregador para montagem
+https://www.mercadolivre.com.br/carregador-digital-para-bateria-18650-26650-37v-42v-bivolt/up/MLBU3236812099?pdp_filters=item_id%3AMLB4095194357&from=gshop&matt_tool=48995110&matt_internal_campaign_id=&matt_word=&matt_source=google&matt_campaign_id=22603531562&matt_ad_group_id=181244933895&matt_match_type=&matt_network=g&matt_device=c&matt_creative=758138322200&matt_keyword=&matt_ad_position=&matt_ad_type=pla&matt_merchant_id=5362130946&matt_product_id=MLBU3236812099&matt_product_partition_id=2424443219726&matt_target_id=pla-2424443219726&cq_src=google_ads&cq_cmp=22603531562&cq_net=g&cq_plt=gp&cq_med=pla&gad_source=1&gad_campaignid=22603531562&gbraid=0AAAAAD93qcATvlYYexvv05aJYrHpMJ4Tg&gclid=EAIaIQobChMI0MSZr8zykgMVRGhIAB0XaQm3EAQYASABEgJsS_D_Bw
+
+[] Carregador para bike
+https://www.amazon.com.br/Carregador-el%C3%A9trico-r%C3%A1pido-bicicleta-bateria/dp/B0FPQX3NBC/ref=asc_df_B0FPQX3NBC?mcid=95f701b14f103f0cbdb7450b18709fcb&tag=googleshopp00-20&linkCode=df0&hvadid=709964503169&hvpos=&hvnetw=g&hvrand=9125178244658586132&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9198515&hvtargid=pla-2463020204586&language=pt_BR&gad_source=1&th=1
+
+[] Suportes para montar a bateria de li-ion
+https://shopee.com.br/product/1470539842/29282992246?gads_t_sig=VTJGc2RHVmtYMTlxTFVSVVRrdENkU1hZSjF1Ym94QW1tdXlLQVFLQ3hjN1JocS9UZVVlUXFINkZubXgyUWNZYm4yK2NrdFZTeDRTNEtFODlpNFd5S1N3djZjUjJOck5vSzFSMEhhTGxwL004OWZNUHV6RVdpUFg2THVTNi9DVUVuaE9lSkxxZnd3ZFFQQksvdnMwdm5RPT0&gad_source=1&gad_campaignid=23320839739&gbraid=0AAAAACoEtRllBmCNNkoB-PYNIPEY77yYc&gclid=EAIaIQobChMI877Kvc3ykgMV8rJaBR231jVtEAQYBCABEgIpDfD_BwE
+
