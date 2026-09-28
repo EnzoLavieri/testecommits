@@ -13,6 +13,32 @@ To Do bateria:
 [] Soldar BMS
 [-] Montar bateria 
 
+->>> valores bike
+células 18650 novas
+células 18650 usadas        | 500
+suporte das células         | 30,60 + 
+testador de bateria unit    | 39,83
+testador de bateria 4x      | 110,84
+papel cevada                | 31,80
+papel cevada para os polos  | 15,29
+solda ponto                 | 185,55
+fita de níquel              | 49,52 
+2 bms                       | 266,48 + 98,18 
+kit elétrico bike           | 1.890,01
+par de freio mt420          | 265,11 + 216,27
+cambio traseiro 7v          | 100
+trocadores de marcha        | 100
+
+chapa de alumínio           | 
+soldar a chapa de alumínio  | 200
+troca da caixa de direção   |
+alinhamento do aro traseiro |
+
+carregador
+case para a bateria
+catraca 7v
+rotor 180mm
+
 Gastos:
 --- bike
 [✓] Aro 29 36 furos
