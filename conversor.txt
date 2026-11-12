@@ -14,8 +14,7 @@ To Do bateria:
 [✓] Separar as series balanceadas
 [✓] Soldar BMS
 [✓] Montar bateria 
-[ ] Desmontar a bateria k
-[ ] Colocar no case
+[✓] Colocar no case
 
 Gastos v2
 ->>> valores bike
@@ -40,10 +39,107 @@ alinhamento do aro traseiro | 40
 case para a bateria         | 491,11
 rotores                     | 200
 catraca + corrente + msc    | 230
+carregador
+quadro
+capacete
+colocar pçs no quadro novo
+
 
 ->>> a comprar
-carregador
+Corrente
 
-[ ] Sair andando 
+
+[✓] Sair andando 
+
+
+(config do overkill solar q o claude mandou)
+
+Vou pesquisar as especificações do JBD SP17S005 e as recomendações de configuração para Li-ion antes de te passar os valores.
+
+Pesquisei a ficha técnica oficial do SP17S005 (versão Li-ion/ternário) e os datasheets de células 18650 de ~2600 mAh. Sua configuração atual tem **alguns valores perigosos**, principalmente as temperaturas e as correntes.
+
+## O que a pesquisa confirmou
+
+- **Limites de hardware do BMS (80 A):** para a versão de 80 A, a proteção de sobrecorrente de carga é 90±5 A, a 1ª de descarga 90±5 A, a 2ª de descarga 275±55 A e o curto-circuito 1200±240 A. O padrão de fábrica é sobretensão em 4,25 V e subtensão em 2,80 V por célula. Esses são os limites do BMS, não do seu pack: 90 A é muito acima do que 7 células 18650 aguentam.
+- **Balanceamento:** o SP17S005 balanceia com apenas 30–90 mA, então ele precisa começar cedo o bastante no topo da carga.
+- **Temperatura das células 18650:** datasheets típicos (LG, Panasonic) indicam carga entre 0 e 45 ℃ e descarga entre -20 e 60 ℃. Para a Samsung 26J, a descarga é limitada a -10 a 60 ℃.
+- **Corrente de carga:** células de 2600 mAh como a EVE 26V são especificadas para carga de até 0,5 A entre 0 e 15 °C e até 1,25 A entre 15 e 45 °C.
+- **Carga abaixo de 0 °C:** a recomendação é cortar a carga em 0 °C e liberar em 10 °C, pois Li-ion nunca deve ser carregada abaixo de 0 °C.
+- **Carregador:** com corte em 4,2 V/célula o BMS desarma por volta de 54,6 V, então o carregador deve ficar um pouco abaixo disso, para encerrar a carga antes do BMS.
+
+## Valores recomendados para 13s7p, 2600 mAh
+
+**Capacidade** (7 × 2600 = 18200 mAh)
+
+| Campo | Atual | Recomendado |
+|---|---|---|
+| Number of Cells | 13 | 13 ✓ |
+| Total Battery Capacity | 18900 | **18200** |
+| Total Cycle Capacity | 15120 | **14560** (80%) |
+| Cell Full / Minimal Voltage | 4200 / 3000 | manter ✓ |
+| Self Discharge e curva 10–100% | — | manter ✓ (curva coerente com NMC) |
+
+**Balanceador**
+
+| Campo | Atual | Recomendado |
+|---|---|---|
+| Start Voltage | 3900 | **4000 mV** |
+| Delta to Balance | 15 | 15 mV ✓ |
+| Balancer Enabled | ligado | ligado ✓ |
+| Bal. only when charging | desligado | pode manter desligado, assim ele continua balanceando em repouso depois da carga |
+
+Com início em 3900 mV e balanceamento fora da carga, o BMS pode "balancear" durante a descarga com base na queda de tensão sob carga. Subir para 4000 mV evita isso.
+
+**Proteções** (Trigger / Release / Delay)
+
+| Proteção | Atual | Recomendado |
+|---|---|---|
+| Charge over temp | 65 / 55 | **45 / 40 / 5** |
+| Charge under temp | **-30 / -25** ⚠️ | **0 / 5 / 5** |
+| Discharge over temp | 75 / 65 | **60 / 50 / 5** |
+| Discharge under temp | -30 / -25 | **-20 / -10 / 5** (se forem Samsung 26J: -10 / -5) |
+| Batt over voltage | 55250 / 53950 | **54900 / 53300 / 2** |
+| Batt under voltage | 36400 / 37700 | **36400 / 39000 / 2** |
+| Cell over voltage | 4250 / 4150 | **4220 / 4100 / 2** |
+| Cell under voltage | 2800 / 2900 | **2800 / 3000 / 2** |
+| Charge over current | **90000 mA** ⚠️ | **cerca de 1,5× a corrente do seu carregador, nunca acima de 18000 mA** (1C = 7 × 2,6 A). Para um carregador de até 8 A: **12000 / 32 / 5** |
+| Discharge over current | **90000 mA** ⚠️ | **7 × a corrente contínua da célula.** Para célula de 5 A: **35000 / 32 / 5**. Para célula de 10 A: **70000 / 32 / 5** |
+
+**Nível 2 e Nível 3**
+
+| Campo | Atual | Recomendado |
+|---|---|---|
+| L2 Overcurrent | 340 A, delay **vazio** | **cerca de 2× o discharge over current** (por exemplo 80–100 A), com o delay preenchido (por exemplo 320–640 ms; se o app arredondar, aceite o valor mais próximo) |
+| L2 Overvoltage | 4300 mV / 8 s | manter ✓ |
+| L2 Undervoltage | 2500 mV / 1 s | manter ✓ |
+| L3 Short circuit | 440 A / 200 µs | de preferência baixar para cerca de 200–250 A, se o app aceitar |
+
+O nível 2 é importante no seu caso. Um pack 7p de 18650 comum pode nem chegar a 440 A num curto-circuito, então na prática quem protege é o nível 2. Por isso ele precisa ter um valor baixo e o delay preenchido.
+
+**NTC:** NTC1 a NTC3 ligados está certo, pois o BMS tem 1 sensor interno e 2 externos. Os dois externos precisam estar presos com fita nas células. Se algum não estiver conectado, desmarque-o, senão ele lê valores errados e bloqueia a bateria.
+
+## Como aplicar
+
+1. Toque em **BMS read** e depois em **Save Config**, para guardar um backup da configuração atual.
+2. Altere os valores acima.
+3. Toque em **BMS write**.
+4. Toque em **BMS read** de novo e confira se todos os valores foram gravados.
+5. Use um carregador de **54,6 V**. Para mais vida útil, 54,0–54,3 V. A corrente do carregador deve ficar abaixo do "charge over current".
+6. Ajuste o limite de corrente da controladora para ficar abaixo do "discharge over current".
+
+Os dois valores de corrente dependem do modelo exato da célula. Se você me disser qual é a célula (por exemplo Samsung 26J, EVE 26V ou LG), a corrente do carregador e a da controladora, eu fecho esses números com o datasheet dela.
+
+Este guia é baseado nas especificações publicadas. Antes de usar, confira os valores com o datasheet das suas células.
+
+Sources:
+- [JBD SP17S005 Product Specification (alicdn)](https://ae01.alicdn.com/kf/Sb06fca3ee8ac4e26a9c68014176cd670D.pdf)
+- [JBD BMS SP17S005 Technical Specification (manuals.plus)](https://manuals.plus/m/615f5670a8a5be5eb5ce770ac5faa117ee8e074313c3c374cab8252f78723a51)
+- [JBD Smart BMS User Manual (manuals.plus)](https://manuals.plus/ae/1005006301819734)
+- [LG MJ1 datasheet](https://cdn.shopify.com/s/files/1/0721/2761/1190/files/LG-MJ1.pdf)
+- [Samsung ICR18650-26J datasheet](https://e2e.ti.com/cfs-file/__key/communityserver-discussions-components-files/196/ICR18650_2D00_26J_2D00_Samsung.pdf)
+- [EVE ICR18650-26V datasheet](https://cdn.shopify.com/s/files/1/0556/5054/9871/files/EVE_ICR18650-26V.pdf)
+- [esk8.news – Battery Builders Club](https://forum.esk8.news/t/the-battery-builders-club/720?page=1083)
+- [Endless Sphere – BMS settings 13S](https://endless-sphere.com/sphere/threads/bms-settings.116618/)
+
 
 
