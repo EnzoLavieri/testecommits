@@ -54,125 +54,94 @@ Corrente
 
 (config do overkill solar q o claude mandou v2)
 
-Vou pesquisar a configuração correta para esse BMS e seu pack e já te passo os valores.
+Sua configuração está coerente na parte de tensões. Há três pontos que pedem ajuste. A temperatura de carga está perigosa: com -30 °C, a BMS permite carregar abaixo de 0 °C, o que danifica Li-ion (lithium plating). As correntes estão muito altas para o seu sistema. E falta preencher o delay do Level 2 Overcurrent.
 
-Montei a configuração completa para o seu pack. Algumas partes dependem das suas células e do carregador, então deixei perguntas no final para ajustar os valores.
+Considerei: 13s7p, controladora de 30 A (motor de 1000 W puxa ~21 A nominal e ~30 A de pico) e carregador de 54,6 V.
 
-**Números do seu pack**
-- 13S Li-ion: 54,6 V cheio (4,20 V/célula), 48,1 V nominal e uns 39 V vazio (3,0 V/célula).
-- Capacidade: 7 × 2500 mAh = **17.500 mAh**.
-- Corrente: com a controladora de 30 A, o pack entrega uns 1.450–1.600 W de pico. Isso dá cerca de 4,3 A por célula (≈1,7C). Para células novas de marca, tudo bem. Para células recicladas de notebook, já é o limite.
+## 1. Temperaturas (o mais importante)
 
-## Antes de começar
-1. **Ligação dos fios de balanceamento.** No diagrama de 13S do SP17S005, as ligações são B- (negativo total), C- (negativo de carga/descarga) e os fios de balanceamento BC0 a BC13. Nos fios que sobram, siga o diagrama que veio com a placa. Normalmente eles são ligados à última ou penúltima célula. Antes de conectar o chicote na BMS, meça com o multímetro a tensão de cada fio.
-2. **Quantidade de células.** Há relatos de quem montou um pack 14S e o app mostrou 11 séries. Se o número aparecer errado, dá para corrigir nos parâmetros, desde que a ligação esteja certa. Confira se o app mostra **13**.
-3. **Faça backup.** O app Overkill Solar importa e exporta arquivos .fig e permite ajustar as proteções avançadas de nível 2 e 3. Exporte a configuração de fábrica antes de mexer em qualquer coisa.
-4. **Como gravar.** Conecte pelo Bluetooth, entre nos parâmetros, toque em *Read* (ler), altere os valores e toque em *Write* (gravar). Usuários confirmam que o app da Overkill libera todos os ajustes no SP17S005. Se a gravação não funcionar, desligue e religue a BMS e tente de novo. Há relatos de que firmwares mais novos só aceitam mudanças nas primeiras 2 horas depois de ligar.
-
-## 1. Proteções (tensões por célula e do pack)
-
-| Parâmetro | Valor | Liberação (release) | Atraso |
+| Parâmetro | Atual (disparo / libera) | Sugerido | Motivo |
 |---|---|---|---|
-| Sobretensão da célula | 4200 mV | 4100 mV | 2 s |
-| Subtensão da célula | 2800 mV | 3000 mV | 2–4 s |
-| Sobretensão do pack | 54600 mV | 53300 mV | 2 s |
-| Subtensão do pack | 36400 mV | 39000 mV | 2–4 s |
-| Sobrecorrente de carga | 8 A (ou ~2× a corrente do carregador) | 32 s | 2 s |
-| Sobrecorrente de descarga | 35 A | 32 s | 2–3 s |
+| charge over temp | 65 / 55 °C | **45 / 40 °C** | Li-ion não deve carregar acima de ~45 °C |
+| charge under temp | -30 / -25 °C | **0 / 5 °C** | Carregar abaixo de 0 °C deposita lítio metálico na célula, com dano permanente e risco de curto interno |
+| discharge over temp | 75 / 65 °C | **60 / 50 °C** | A maioria das 18650 tem limite de 60 °C |
+| discharge under temp | -30 / -25 °C | **-20 / -15 °C** | Na prática não afeta em Curitiba |
 
-Num pack 13S de Li-ion parecido com o seu, um usuário usava sobretensão de 4,2 V, liberação de 4,199 V, subtensão de 2,75 V e liberação de 2,85 V. Na resposta do fórum, esses foram considerados valores típicos para Li-ion. Eu deixei a liberação da sobretensão mais baixa (4,10 V) para a BMS não ficar ligando e desligando a carga.
+Deixe marcados só os NTCs que estão fisicamente presos no pack. Um NTC habilitado e solto pode dar leitura errada.
 
-**O que precisa de atenção:**
-- **Valores de fábrica podem cortar o motor.** Um usuário do app Overkill encontrou a tensão mínima do pack em 39,5 V, e a BMS desligava assim que a bike recebia carga. Por isso, confira a subtensão do pack.
-- **Quem deve cortar primeiro é a controladora**, em uns 39 V. A BMS a 2,8 V/célula fica só como última proteção. O atraso de 2–4 s evita desligamentos quando a tensão cai em subidas.
-- **Proteção de nível 2 e curto-circuito:** deixe no padrão por enquanto. Se a BMS desarmar ao conectar a controladora (por causa dos capacitores dela), o problema é a corrente de partida. A solução é um conector anti-faísca ou um resistor de pré-carga, não um limite mais alto.
+## 2. Tensões
 
-## 2. Temperatura
-- Carga: máx. 45 °C (liberação 40 °C); mín. 0 °C (liberação 5 °C).
-- Descarga: máx. 60 °C (liberação 55 °C); mín. −20 °C (liberação −15 °C).
-- Nas funções, ative **apenas os sensores NTC que estão de fato instalados**. Um sensor ativado sem estar ligado gera leituras falsas.
+| Parâmetro | Atual | Sugerido | Motivo |
+|---|---|---|---|
+| cell over voltage | 4250 / 4150 | **4230 / 4100** | Corta mais perto do limite real (4,20 V) e libera só depois de a célula baixar bem |
+| batt over voltage | 55250 / 53950 | **55000 / 53300** | 13 × 4,23 V e 13 × 4,10 V |
+| cell under voltage | 3000 / 3100 | **3000 / 3200** | Com liberação em 3100, a célula "volta" sozinha sem carga e a bike fica liga-desliga |
+| batt under voltage | 39000 / 40300 | **39000 / 41600** | 13 × 3,0 V e 13 × 3,2 V |
+| Level 2 Undervoltage | 2500 mV | **2700 mV** | Proteção de reserva menos agressiva com a célula |
+| Level 2 Overvoltage | 4300 / 8 s | manter | Já está bom como segunda barreira |
 
-## 3. Capacidade e indicador de carga (SOC)
-| Parâmetro | Valor |
-|---|---|
-| Capacidade de projeto (Design Capacity) | 17500 mAh |
-| Capacidade de ciclo (Cycle Capacity) | 16500 mAh |
-| Tensão de carga completa (100%) | 4150 mV/célula |
-| Tensão de fim de descarga (0%) | 3000 mV/célula |
-| 80% / 60% / 40% / 20% | 3960 / 3820 / 3680 / 3450 mV |
-| Taxa de autodescarga | 0 % |
+Confira a LVC (corte por tensão baixa) da sua controladora. Normalmente fica em 41–42 V, e nesse caso ela corta antes da BMS, que é o ideal.
 
-Num caso com os dois campos de capacidade iguais e erros de sobrecorrente, a sugestão do fórum foi deixar a capacidade de ciclo um pouco menor. Os valores de 80/60/40/20% batem com uma tabela de NMC usada por outro usuário de JBD: 3960, 3820, 3680 e 3450 mV. Se algum campo pedir a tensão do pack em vez da célula, multiplique por 13. Por exemplo, 4150 mV vira 53950 mV.
+## 3. Correntes
 
-## 4. Balanceamento
-- Tensão de início: **3900 mV**. O padrão costuma ser 4000 mV. Se as células forem desiguais, 3900 mV dá mais tempo para equalizar.
-- Diferença para balancear (delta): **15–20 mV**.
-- Balanceamento: ativado. "Só durante a carga": ativado, para não descarregar o pack parado.
-- O balanceamento é fraco: de 30 a 90 mA. Ele só corrige diferenças pequenas, então os 13 grupos de 7 células precisam ter capacidades bem parecidas.
+| Parâmetro | Atual | Sugerido | Motivo |
+|---|---|---|---|
+| discharge over current | 90000 mA, delay 30 | **40000 mA, delay 5** | A controladora limita em 30 A. Acima de 40 A é sinal de falha. Com 90 A e 30 s de delay, essa proteção nunca atua |
+| charge over current | 90000 mA, delay 10 | **~2× a corrente do carregador** (ex.: 5000 mA para um de 2–3 A), delay 5 | Pega carregador defeituoso ou errado |
+| Release (32 s) | 32 s | manter | — |
+| Level 2 Overcurrent | 340 A, delay vazio | **Menor opção ≥ ~100 A, delay 320 ms** | O delay vazio pode gravar um valor indefinido. 340 A é alto demais para o seu pack |
+| Level 3 Short Circuit | 440 A / 200 µs | **Menor opção ≥ ~200 A / 200 µs** | Corte mais rápido em caso de curto |
 
-## 5. Funções e carregador
-- **Switch:** só ative se houver um botão ligado na porta de chave. Ativado sem botão, a descarga pode ficar bloqueada.
-- **Load detect:** desligado.
-- **Carregador:** use um de 54,6 V, ou de preferência um pouco menos. Com esses ajustes, a BMS corta em torno de 54,6 V. O ideal é deixar o carregador um pouco abaixo disso, para ele encerrar a carga antes da BMS desarmar.
+Os valores de Level 2 e Level 3 são escolhidos de uma lista fixa que depende do shunt da BMS. Por isso indiquei a menor opção disponível acima de cada referência. Se a BMS desarmar ao ligar a controladora (pico de carga dos capacitores), suba o short circuit um degrau.
 
-## Perguntas para ajustar
-1. **Que células você usou?** São novas de marca (qual modelo?) ou recicladas de notebook? É isso que define se 35 A de descarga é seguro ou se é melhor baixar e limitar a controladora.
-2. **Qual é a tensão e a corrente do seu carregador?**
-3. **Você tem sensores NTC externos e um botão liga/desliga conectados na BMS?**
+Com 7p e 40 A, cada célula fornece ~5,7 A, o que é tranquilo para a maioria das 18650. Mesmo assim, confira o datasheet das suas.
 
-Também vale conferir em qual tensão a sua controladora corta. Se for acima de 42 V, você perde parte da autonomia.
+## 4. Capacidade e curva de SOC
 
-Fontes:
-- [Endless Sphere: JBD smart BMS heads up](https://endless-sphere.com/sphere/threads/jbd-smart-bms-heads-up.120236/)
-- [Endless Sphere: BMS settings (13S Li-ion)](https://endless-sphere.com/sphere/threads/bms-settings.116618/)
-- [Endless Sphere: JBD BMS turning off at 28A](https://endless-sphere.com/sphere/threads/jbd-bms-keeps-turning-off-at-28amps-even-tho-i-set-over-current-discharge-protection-at-60amps.127824/)
-- [Endless Sphere: JBD (dis)charge overcurrents](https://endless-sphere.com/sphere/threads/having-trouble-with-jbd-bms-dis-charge-overcurrents.129500/)
-- [Endless Sphere: JBD no parameter options](https://endless-sphere.com/sphere/goto/post?id=1895769)
-- [Manual JBD-SP17S005 (manuals.plus)](https://manuals.plus/ae/1005010190696463)
-- [esk8.news: Xiaoxiang App Help](https://forum.esk8.news/t/smart-bms-xiaoxiang-app-help/59458)
-- [Power Forum: ligação de fios não usados](https://powerforum.co.za/topic/19980-pace-bms/)
-- [App Overkill Solar (App Store)](https://apps.apple.com/us/app/overkill-solar/id6444233824)
+- **Total Battery Capacity, 18200 mAh:** corresponde a células de 2600 mAh (7 × 2600). Se as suas forem de outra capacidade, corrija (ex.: 2500 → 17500, 3000 → 21000).
+- **Cycle Capacity, 14650 (~80%):** ok.
+- **Cell Full Voltage, 4200:** ok. Se o SOC nunca chegar a 100% no fim da carga, baixe para 4150.
 
-Ao acelerar, a corrente chega perto de 30 A e a força cai. Isso tem quatro causas possíveis. As duas primeiras são as mais comuns. Antes de mudar qualquer ajuste, descubra qual delas está acontecendo.
+A sua tabela de SOC cai rápido demais embaixo: 20% em 3450 mV e 10% em 3300 mV. Isso faz o indicador mostrar mais carga do que você realmente tem quando a bateria está baixa. Uma curva típica de Li-ion NMC/NCA em repouso:
 
-**Primeiro: a força some de vez ou só para de aumentar?** Sua controladora é de 30 A. Se o motor continua puxando e a corrente só "trava" em uns 30 A, é a própria controladora limitando a corrente. Isso é normal e não é defeito.
+| SOC | 100% | 90% | 80% | 70% | 60% | 50% | 40% | 30% | 20% | 10% |
+|---|---|---|---|---|---|---|---|---|---|---|
+| mV | 4150 | 4060 | 3980 | 3910 | 3850 | 3790 | 3740 | 3690 | 3630 | 3530 |
 
-## Como descobrir quem está cortando
+## 5. Balanceamento
 
-| O que acontece | Causa provável |
-|---|---|
-| A força volta **na hora** em que você solta o acelerador | Queda de tensão sob carga: uma célula passa do limite mínimo na BMS, ou o pack todo passa do corte de tensão da controladora |
-| A força só volta depois de **~30 s**, ou desligando e religando | Proteção de sobrecorrente da BMS |
-| A força volta na hora e o app **não mostra nenhum alarme** | Corte de tensão baixa da própria controladora |
+| Parâmetro | Atual | Sugerido |
+|---|---|---|
+| Start Voltage | 3900 | manter (3900–4000) |
+| Delta to Balance | 20 mV | manter (15–20) |
+| Bal. only when charging | desligado | **ligar** |
 
-Pela especificação da JBD, depois de uma proteção de sobrecorrente de descarga, a BMS volta sozinha após um atraso de 32 s. Por isso o tempo para a força voltar ajuda a separar os casos.
+Durante a descarga sob carga, a diferença entre células reflete a resistência interna, não o estado de carga real. Balancear nessa hora pode até piorar o equilíbrio.
 
-**O melhor teste:** deixe o app aberto na tela principal e peça para alguém filmar a tela enquanto você acelera. Ou faça o teste com a roda travada no freio, por pouco tempo. Na hora do corte, observe o **alarme/status de proteção** que aparece e a **tensão de cada célula**.
+## Como aplicar
 
-## Causas e soluções
+1. Clique em **BMS read** e depois em **Save Config** para guardar um backup da configuração atual.
+2. Altere os valores.
+3. Clique em **BMS write** e depois em **BMS read** de novo para confirmar que tudo foi gravado.
+4. Faça uma carga completa e acompanhe as células. A diferença no fim da carga deve ficar abaixo de ~20–30 mV.
 
-**1. Queda de tensão numa célula (a mais provável, ainda mais com células usadas).** Num caso quase idêntico no fórum, a BMS desligava em 28 A. O usuário achava que era sobrecorrente, mas o pack entrava em proteção de sobredescarga. A explicação mais comum é que as células não aguentam a carga, a tensão delas cai muito, e uma ou mais passam do corte por célula da BMS, que então desliga a saída para protegê-las. Seus 30 A dão cerca de 4,3 A por célula. Para célula reciclada de notebook, isso é muito.
-- **Como confirmar:** um dos 13 grupos cai bem mais que os outros durante a aceleração. Exemplo: os outros ficam em 3,6 V e esse vai a 3,0 V.
-- **Solução de verdade:** trocar ou refazer o grupo fraco, deixando os grupos com capacidade e resistência interna parecidas.
-- **Paliativo:** deixe a subtensão da célula em 2800 mV com atraso de 3–4 s. Não desça abaixo de 2,7 V. Se a controladora for programável, reduza a corrente dela, por exemplo para 22–25 A.
-
-**2. Sobrecorrente da BMS ajustada baixa.** Confira no app o valor que está **gravado** de verdade. Às vezes a gravação falha e fica o valor de fábrica. O primeiro nível precisa estar em 35 A com 2–3 s de atraso. Veja também a **proteção de nível 2** (Level 2 Overcurrent). Ela age em milissegundos, então um pico na hora de acelerar pode desarmá-la se o valor estiver baixo. Deixe bem acima: algo como 80 A ou mais, ou o padrão de fábrica do modelo de 80 A.
-
-**3. Corte de tensão da controladora.** Algumas controladoras de 48 V cortam em torno de 42 V. Seu 13S cheio tem 54,6 V. Com a bateria pela metade (~48 V) e a queda de tensão ao acelerar, ela chega fácil a 42 V. Se o app não mostrar alarme, é isso. Ajuste o corte da controladora para ~39 V, se ela permitir.
-
-**4. Mau contato ou fiação fina.** Fita de níquel fina entre os grupos, solda ruim ou conector fraco também derrubam a tensão sob carga. Depois de rodar, sinta se há pontos quentes, principalmente no conector e nas ligações dos grupos.
-
-## O que eu preciso para fechar o diagnóstico
-Me mande estas informações (prints ajudam):
-1. O **alarme** que aparece no app na hora do corte e a **tensão de cada célula** nesse momento.
-2. A tela dos **parâmetros de proteção**, incluindo o nível 2.
-3. Em quanto tempo a força volta.
-4. Se as células são **novas ou recicladas**.
-
-Fontes:
-- [Endless Sphere: JBD desligando em 28 A](https://endless-sphere.com/sphere/threads/jbd-bms-keeps-turning-off-at-28amps-even-tho-i-set-over-current-discharge-protection-at-60amps.127824/)
-- [Endless Sphere: corte por queda de tensão em célula](https://endless-sphere.com/sphere/goto/post?id=1787657)
-- [Especificação JBD SP22S001 (tempos de proteção)](https://cdn.shopify.com/s/files/1/0007/0824/7615/files/JBD-BMS_SP22S001_pdf.pdf)
-- [Letrigo: diagnóstico de desarme por sobrecorrente](https://letrigo.com/blogs/knowledge/fix-overcurrent-ebike-bms-trip-issues)
+Se me passar o modelo das células e a corrente do seu carregador, eu fecho os valores de capacidade e de charge over current.
 
 
+Com células de 2500 mAh e carregador de 2 A, ficam assim os valores que dependiam disso:
+
+| Parâmetro | Atual | Novo |
+|---|---|---|
+| Total Battery Capacity | 18200 mAh | **17500 mAh** (7 × 2500) |
+| Total Cycle Capacity | 14650 mAh | **14000 mAh** (80%) |
+| charge over current | 90000 mA, delay 10 | **5000 mA, delay 5** |
+| discharge over current | 90000 mA, delay 30 | **35000 mA, delay 5** |
+
+Baixei a descarga de 40 A para 35 A por causa das células sem marca. Muitas dessas 18650 de 2500 mAh (geralmente de packs de notebook) são feitas para descarga contínua de 1C a 2C, ou seja, uns 2,5 a 5 A por célula. Com a controladora puxando 30 A, cada célula entrega ~4,3 A, o que fica no limite do aceitável. Por isso vale observar:
+
+- **Temperatura do pack:** depois de uma subida longa ou de uso forte, se ele passar de uns 45 °C, as células estão sendo exigidas demais.
+- **Queda de tensão sob carga:** se no app a tensão de alguma célula despencar muito mais que as outras quando você acelera, aquele grupo paralelo tem resistência interna maior.
+
+O carregador de 2 A é ótimo para esse pack. São só ~0,3 A por célula, uma carga bem suave que ajuda a prolongar a vida útil. Uma carga completa de 0 a 100% leva umas 9 horas.
+
+O resto da configuração continua como sugeri antes (temperaturas, tensões, Level 2/3 e balanceamento). A tabela de SOC que passei é genérica para Li-ion. Se depois de algumas cargas e descargas o indicador parecer impreciso, dá para ajustá-la com base no que você observar.
